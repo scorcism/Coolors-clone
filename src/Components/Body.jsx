@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 
 const Body = () => {
@@ -39,33 +40,75 @@ const Body = () => {
   }, []);
 
   return (
-    <div className="bg-primary/70 h-[92vh] w-full flex flex-row justify-between">
-      {colors.map((color) => (
-        <Div key={color} color={color} />
+    <div className="bg-primary/70 h-[92vh] w-full flex xs:flex-col md:flex-row justify-between">
+      {colors.map((color, index) => (
+        <Div key={color} color={color} index={index} />
       ))}
     </div>
   );
 };
 
-const Div = ({ color }) => {
+const Div = ({ color, index }) => {
+  const [colorCopied, setColorCopied] = useState(false);
+
   return (
     <>
-      <div
+      <motion.div
+        initial={{
+          opacity: 0,
+        }}
+        whileInView={{
+          opacity: 1,
+        }}
+        transition={{
+          duration: 0.1,
+          delay: index / 12,
+        }}
         style={{
           backgroundColor: color,
         }}
         className={`w-full my-2 mx-2 rounded-lg hover:shadow-md transition-all duration-300 py-10 px-2 flex flex-col items-center justify-end`}
       >
-        <h1
-          className="bg-secondary/20 rounded-md px-3 py-1 hover:bg-secondary/40 transition-all duration-200  cursor-pointer"
-          title="Click to Copy"
-          onClick={() => {
-            navigator.clipboard.writeText(color);
-          }}
-        >
-          {color}
-        </h1>
-      </div>
+        <div>
+          {colorCopied && (
+            <motion.p
+              initial={{
+                opacity: 0,
+                y: +10,
+              }}
+              transition={{
+                duration: 0.2,
+              }}
+              whileInView={{
+                opacity: 1,
+                y: 0,
+              }}
+              className="rounded-md px-1 py-[1px] text-center my-1"
+            >
+              copied
+            </motion.p>
+          )}
+          <motion.h1
+            whileTap={{
+              scale: 1.2,
+            }}
+            whileHover={{
+              border: "1px solid white",
+            }}
+            className={`bg-secondary/20 rounded-md px-3 py-1 hover:bg-secondary/40 transition-all duration-200 shadow-md  cursor-pointer text-black`}
+            title="Click to Copy"
+            onClick={() => {
+              setColorCopied(true);
+              navigator.clipboard.writeText(color);
+              setTimeout(() => {
+                setColorCopied(false);
+              }, 1000);
+            }}
+          >
+            {color}
+          </motion.h1>
+        </div>
+      </motion.div>
     </>
   );
 };
